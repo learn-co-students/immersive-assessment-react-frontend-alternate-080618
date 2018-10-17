@@ -6,7 +6,8 @@ const apiBaseAddress = "http://localhost:4000/transactions";
 
 class AccountContainer extends Component {
   state = {
-    transactions: []
+    transactions: [],
+    searchValue: ''
   };
 
   componentDidMount() {
@@ -15,15 +16,37 @@ class AccountContainer extends Component {
       .then(transactions => this.setState({ transactions }));
   }
 
-  handleChange(event) {
-    // your code here
+  handleChange = (event) => {
+    this.setState({searchValue:event.target.value},
+      function() {
+        this.renderTransactions()
+      }
+    )
   }
+
+  renderTransactions = () =>{
+    let transaction = this.state.transactions
+      return transaction.filter(Obj =>{
+        return Obj.description.toLowerCase()
+        .includes(this.state.searchValue.toLowerCase())
+      })
+  }
+
+
+
+
 
   render() {
     return (
       <div>
-        <Search />
-        <TransactionsList />
+        <Search
+          handleChange={this.handleChange}
+          searchValue={this.state.searchValue}
+        />
+        <TransactionsList
+          transactions={this.renderTransactions()}
+          sortTrans={this.sortTrans}
+        />
       </div>
     );
   }
